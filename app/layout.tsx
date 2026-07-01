@@ -35,7 +35,7 @@ export default function RootLayout({
     >
       <body className={`${geist.variable} ${schibsted.variable} ${martian.variable} antialiased min-h-screen`}>
         <Navbar />
-        <div className="absolute top-0 inset-0 z-[-1] min-h-screen">
+        <div className="fixed inset-0 -z-10">
           <Lightfall
             colors={['#A6C8FF', '#5227FF', '#FF9FFC']}
             backgroundColor="#000"
