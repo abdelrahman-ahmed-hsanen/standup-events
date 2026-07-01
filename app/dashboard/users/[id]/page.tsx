@@ -1,7 +1,19 @@
-import React from 'react';
+'use client';
 
-const UserDetails = async ({ params }: { params: { id: string } }) => {
-    const { id } = await params
+import React, { useEffect } from 'react';
+import posthog from 'posthog-js';
+import { useParams } from 'next/navigation';
+
+const UserDetails = () => {
+    const params = useParams<{ id: string }>();
+    const { id } = params;
+
+    useEffect(() => {
+        posthog.capture("dashboard_user_profile_viewed", {
+            user_id: id,
+        });
+    }, [id]);
+
     return (
         <div>
             {id}

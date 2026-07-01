@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Schibsted_Grotesk, Martian_Mono, Geist } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
-import LightRays from "@/components/LightRays";
+
+
 import Lightfall from "@/components/Lightfall";
 import Navbar from "@/components/Navbar";
 
@@ -28,6 +28,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html
       lang="en"
