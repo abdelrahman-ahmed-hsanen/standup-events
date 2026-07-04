@@ -6,6 +6,7 @@ import mongoose, {
 
 /** Plain TypeScript shape of an Event document. */
 export interface IEvent {
+  id: string;
   title: string;
   slug: string;
   description: string;
@@ -40,9 +41,10 @@ const REQUIRED_STRING_FIELDS = [
   "organizer",
 ] as const satisfies ReadonlyArray<keyof IEvent>;
 
-const REQUIRED_ARRAY_FIELDS = ["agenda", "tags"] as const satisfies ReadonlyArray<
-  keyof IEvent
->;
+const REQUIRED_ARRAY_FIELDS = [
+  "agenda",
+  "tags",
+] as const satisfies ReadonlyArray<keyof IEvent>;
 
 /** Converts a title into a URL-safe slug. */
 function slugify(title: string): string {
@@ -81,7 +83,10 @@ function normalizeTime(time: string): string {
     throw new Error("Invalid time value");
   }
 
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+    2,
+    "0"
+  )}`;
 }
 
 function assertNonEmptyString(value: string, field: string): void {
@@ -109,16 +114,39 @@ const eventSchema = new Schema<IEvent>(
     time: { type: String, required: true, trim: true },
     mode: { type: String, required: true, trim: true },
     audience: { type: String, required: true, trim: true },
-    agenda: { type: [String], required: true },
+    agenda: {
+      type: [String],
+      required: true,
+      default: [],
+    },
     organizer: { type: String, required: true, trim: true },
-    tags: { type: [String], required: true },
+    tags: {
+      type: [String],
+      required: true,
+      default: [],
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  }
 );
 
 // Enforce slug uniqueness at the database level.
 eventSchema.index({ slug: 1 }, { unique: true });
 
+/**
+ * Runs BEFORE mongoose validation.
+ * Generate the slug here so the required validator passes.
+ */
+eventSchema.pre("validate", function (this: HydratedDocument<IEvent>) {
+  if (this.isNew || this.isModified("title")) {
+    this.slug = slugify(this.title);
+  }
+});
+
+/**
+ * Runs AFTER validation and BEFORE saving.
+ */
 eventSchema.pre("save", function (this: HydratedDocument<IEvent>) {
   for (const field of REQUIRED_STRING_FIELDS) {
     assertNonEmptyString(this[field] as string, field);
@@ -126,11 +154,6 @@ eventSchema.pre("save", function (this: HydratedDocument<IEvent>) {
 
   for (const field of REQUIRED_ARRAY_FIELDS) {
     assertNonEmptyArray(this[field] as string[], field);
-  }
-
-  // Regenerate slug only when the title is new or has changed.
-  if (this.isNew || this.isModified("title")) {
-    this.slug = slugify(this.title);
   }
 
   this.date = normalizeDate(this.date);
