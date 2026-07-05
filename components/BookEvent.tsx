@@ -1,4 +1,5 @@
 'use client'
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 
 const BookEvent = () => {
@@ -8,7 +9,11 @@ const BookEvent = () => {
         e.preventDefault();
         setTimeout(() => {
             setSubmitted(true)
-        }, 1000)
+        }, 500);
+        posthog.capture("book_event", {
+            email,
+            timeSubmitted: new Date().toISOString(),
+        })
     }
 
     return (

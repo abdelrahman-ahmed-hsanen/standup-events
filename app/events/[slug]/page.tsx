@@ -2,6 +2,7 @@ import BookEvent from '@/components/BookEvent';
 import EventCard from '@/components/EventCard';
 import { IEvent } from '@/database';
 import { getSimilarEventsBySlug } from '@/lib/actions/event.action';
+import { cacheLife } from 'next/cache';
 import Image from 'next/image';
 import React from 'react';
 const EventDetailItem = ({ icon, alt, label }: { icon: string, alt: string, label: string }) => {
@@ -18,6 +19,8 @@ const EventTags = ({ tags }: { tags: string[] }) => {
     </div>
 };
 const Page = async ({ params }: { params: { slug: string } }) => {
+    'use cache'
+    cacheLife('hours')
     const { slug } = await params;
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events/${slug}`, { cache: 'no-store' });
     const { event: { description, image, overview, date, time, location, mode, organizer, audience, tags } } = await response.json();
