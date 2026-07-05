@@ -7,7 +7,7 @@ import React from 'react';
 const Page = async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events`, { cache: 'no-store' });
     const { events } = await response.json();
-    console.log(events);
+
     return (
         <section className="mt-12 p-14" >
 
