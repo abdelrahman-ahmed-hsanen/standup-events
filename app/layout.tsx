@@ -3,7 +3,7 @@ import { Schibsted_Grotesk, Martian_Mono, Geist } from "next/font/google";
 import "./globals.css";
 
 
-import Lightfall from "@/components/Lightfall";
+import LightRays from "@/components/LightRays";
 import Navbar from "@/components/Navbar";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
@@ -37,23 +37,19 @@ export default function RootLayout({
       <body className={`${geist.variable} ${schibsted.variable} ${martian.variable} antialiased min-h-screen`}>
         <Navbar />
         <div className="fixed inset-0 -z-10">
-          <Lightfall
-            colors={['#A6C8FF', '#5227FF', '#FF9FFC']}
-            backgroundColor="#000"
-            speed={0.1}
-            streakCount={1}
-            streakWidth={.2}
-            streakLength={1}
-            glow={.5}
-            density={0.6}
-            twinkle={1}
-            zoom={3}
-            backgroundGlow={0.5}
-            opacity={1}
-            mouseInteraction
-            mouseStrength={0.5}
-            mouseRadius={1}
-
+          <LightRays
+            raysOrigin="top-center"
+            raysColor="#fff"
+            raysSpeed={2}
+            lightSpread={2}
+            rayLength={9}
+            followMouse={true}
+            mouseInfluence={.6}
+            noiseAmount={0}
+            distortion={0}
+            pulsating={false}
+            fadeDistance={1}
+            saturation={1}
           />
         </div>
         {children}</body>
