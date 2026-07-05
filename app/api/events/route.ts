@@ -15,23 +15,15 @@ export async function POST(req: NextRequest) {
         } catch (err) {
             return NextResponse.json({ message: "Invalid json data" }, { status: 400 })
         }
-        const file = formData.get("image") as File;
-        if (!file) {
-            return NextResponse.json({ message: "Image file is required" }, { status: 400 });
-        }
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        const uploadImage = await new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream({ resource_type: 'image', folder: 'events' }, (error, result) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            }).end(buffer);
+
+
+        const tags = (formData.get("tags") as string)
+            .split(",")
+            .map(tag => tag.trim());
+        const createEvent = await Event.create({
+            ...event,
+            tags: tags
         });
-        event.image = (uploadImage as { secure_url: string }).secure_url;
-        const createEvent = await Event.create(event);
         return NextResponse.json({ message: "Event created successfully", event: createEvent }, { status: 201 });
     } catch (err) {
 

@@ -1,4 +1,7 @@
 import BookEvent from '@/components/BookEvent';
+import EventCard from '@/components/EventCard';
+import { IEvent } from '@/database';
+import { getSimilarEventsBySlug } from '@/lib/actions/event.action';
 import Image from 'next/image';
 import React from 'react';
 const EventDetailItem = ({ icon, alt, label }: { icon: string, alt: string, label: string }) => {
@@ -18,7 +21,8 @@ const Page = async ({ params }: { params: { slug: string } }) => {
     const { slug } = await params;
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events/${slug}`, { cache: 'no-store' });
     const { event: { description, image, overview, date, time, location, mode, organizer, audience, tags } } = await response.json();
-    console.log("tags", tags)
+    const similarEvents = await getSimilarEventsBySlug(slug);
+    console.log("similarEvents", similarEvents)
     return (
         <section id="event" className="mt-12 p-14 mb-12">
             <div className="header">
@@ -50,9 +54,17 @@ const Page = async ({ params }: { params: { slug: string } }) => {
                 <aside className="booking">
                     <div className="signup-card">
                         <h2 >Book Your Event</h2>
-                        <BookEvent/>
+                        <BookEvent />
                     </div>
                 </aside>
+            </div>
+            <div className="flex w-full flex-col gap-4 pt-20">
+                {similarEvents.length > 0 && <h2 className="">Similar Events</h2>}
+                <div className="events">
+                    {similarEvents.length > 0 && similarEvents.map((event: IEvent) => (
+                        <EventCard key={event.id} {...event} />
+                    ))}
+                </div>
             </div>
         </section>
     );
