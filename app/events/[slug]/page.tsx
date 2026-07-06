@@ -20,12 +20,12 @@ const EventTags = ({ tags }: { tags: string[] }) => {
 };
 const Page = async ({ params }: { params: { slug: string } }) => {
     'use cache'
-    cacheLife('hours')
+    cacheLife('minutes')
     const { slug } = await params;
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events/${slug}`, { cache: 'no-store' });
     const { event: { description, image, overview, date, time, location, mode, organizer, audience, tags } } = await response.json();
     const similarEvents = await getSimilarEventsBySlug(slug);
-   
+
     return (
         <section id="event" className="mt-12 p-14 mb-12">
             <div className="header">
