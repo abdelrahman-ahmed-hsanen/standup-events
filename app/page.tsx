@@ -5,7 +5,7 @@ import { cacheLife } from 'next/cache';
 
 const Page = async () => {
     'use cache'
-    cacheLife('hours') 
+    cacheLife('minutes') 
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events`);
     const { events } = await response.json();
 
