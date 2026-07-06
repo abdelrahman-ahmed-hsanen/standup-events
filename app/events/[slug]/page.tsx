@@ -25,7 +25,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events/${slug}`, { cache: 'no-store' });
     const { event: { description, image, overview, date, time, location, mode, organizer, audience, tags } } = await response.json();
     const similarEvents = await getSimilarEventsBySlug(slug);
-    console.log("similarEvents", similarEvents)
+   
     return (
         <section id="event" className="mt-12 p-14 mb-12">
             <div className="header">
@@ -34,7 +34,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
             </div>
             <div className="details">
                 <div className="content">
-                    <Image src={"/images/event2.jpeg"} alt={"Event Banner"} width={800} height={800} className="banner" />
+                    <Image src={image} alt={"Event Banner"} width={800} height={800} className="banner" />
                     <section className="flex-col-gap-2">
                         <h2 className="text-2xl font-bold">Overview</h2>
                         <p>{overview}</p>
