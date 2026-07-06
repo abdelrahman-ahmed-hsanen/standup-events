@@ -1,11 +1,10 @@
-import { getSimilarEventsBySlug } from "@/lib/actions/event.action";
+import { getEventBySlug, getSimilarEventsBySlug } from "@/lib/actions/event.action";
 import EventCard from "@/components/EventCard";
 import BookEvent from "@/components/BookEvent";
 import Image from "next/image";
 import { IEvent } from "@/database";
 import { cacheLife } from "next/cache";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+import { notFound } from "next/navigation";
 const EventDetailItem = ({ icon, alt, label }: { icon: string, alt: string, label: string }) => {
     return <div className="flex-row-gap-2 items-center">
         <Image src={icon} alt={alt} width={18} height={18} />
@@ -19,13 +18,15 @@ const EventTags = ({ tags }: { tags: string[] }) => {
         </div>))}
     </div>
 };
-export const EventDetails = async ({ params }: Promise<{ slug: string }>) => {
+export const EventDetails = async ({ params }: { params: Promise<string> }) => {
     'use cache'
     cacheLife('minutes')
     const slug = await params;
 
-    const response = await fetch(`${BASE_URL}/api/events/${slug}`);
-    const { event: { description, image, overview, date, time, location, mode, organizer, audience, tags } } = await response.json();
+    const event = await getEventBySlug(slug);
+    if (!event) notFound();
+
+    const { description, image, overview, date, time, location, mode, organizer, audience, tags } = event;
     const similarEvents = await getSimilarEventsBySlug(slug);
 
     return (
